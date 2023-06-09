@@ -1,8 +1,6 @@
 pipeline {
     agent any
 
- 
-
     stages {
         stage('Fetch Code') {
             steps {
@@ -10,20 +8,12 @@ pipeline {
             }
         }
 
- 
-
         stage('Build') {
             steps {
-                dir('/home/ec2-user/') {
-                    sh 'git clone https://github.com/I-AMANSINHA/Jenkins-demo.git .' // Clone the repository to /home/ec2-user/
-                    // sh 'javac -version' // Replace with your Java build command
-                }
-                sh 'javac -classpath /home/ec2-user/apache-tomcat-8.5.88/lib/servlet-api.jar -d /home/ec2-user/CalculaterApp/web/WEB-INF/classes /home/ec2-user/CalculaterApp/src/com/example/servlets/CalculatorServlet.java'
+                sh 'javac -classpath /home/ec2-user/apache-tomcat-8.5.88/lib/servlet-api.jar -d /home/ec2-user/CalculaterApp/web/WEB-INF/classes /path/to/your/source/code/CalculatorServlet.java'
                 sh 'jar -cvf /home/ec2-user/CalculatorApp.war -C /home/ec2-user/CalculaterApp/web .' // Replace with your actual build command and path
             }
         }
-
- 
 
         stage('Deploy') {
             steps {
