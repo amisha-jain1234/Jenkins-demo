@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Fetch Code') {
             steps {
-                git 'https://github.com/I-AMANSINHA/Jenkins-demo.git'
+                git 'https://github.com/your-public-repo.git'
             }
         }
 
