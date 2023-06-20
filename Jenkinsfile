@@ -1,33 +1,34 @@
 pipeline {
     agent any
-
- 
-
+   
     stages {
         stage('Fetch Code') {
             steps {
-                git 'https://github.com/I-AMANSINHA/Jenkins-demo.git'
+                print(env.WORKSPACE)
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/main']],
+                          doGenerateSubmoduleConfigurations: false,
+                          extensions: [],
+                          submoduleCfg: [],
+                          userRemoteConfigs: [[url: 'https://github.com/I-AMANSINHA/Jenkins-demo.git']]
+                        ])
             }
         }
-
- 
 
         stage('Build') {
             steps {
-                dir('/home/ec2-user/') {
-                    sh 'git clone https://github.com/I-AMANSINHA/Jenkins-demo.git .' // Clone the repository to /home/ec2-user/
-                    // sh 'javac -version' // Replace with your Java build command
+                dir('/root/.jenkins/jobs/Test2/workspace/') {
+                    sh 'javac -classpath /home/ec2-user/apache-tomcat-8.5.88/lib/servlet-api.jar -d CalculatorApp/WEB-INF/classes CalculatorApp/src/com/example/servlets/CalculatorServlet.java'
                 }
-                sh 'javac -classpath /home/ec2-user/apache-tomcat-8.5.88/lib/servlet-api.jar -d /home/ec2-user/CalculaterApp/web/WEB-INF/classes /home/ec2-user/CalculaterApp/src/com/example/servlets/CalculatorServlet.java'
-                sh 'jar -cvf /home/ec2-user/CalculatorApp.war -C /home/ec2-user/CalculaterApp/web .' // Replace with your actual build command and path
             }
         }
-
- 
-
+        
         stage('Deploy') {
             steps {
-                sh 'cp /home/ec2-user/CalculatorApp.war /home/ec2-user/apache-tomcat-8.5.88/webapps' // Replace with the appropriate Tomcat deployment command
+                // sh 'rm /home/ec2-user/apache-tomcat-8.5.88/webapps/CalculatorApp.war'
+                sh 'jar -cvf /home/ec2-user/apache-tomcat-8.5.88/webapps/CalculatorApp.war -C /root/.jenkins/jobs/Test2/workspace/CalculatorApp/web .' // Replace with your actual build command and path
+                // sh 'bash /home/ec2-user/apache-tomcat-8.5.88/bin/shutdown.sh'
+                sh 'bash /home/ec2-user/apache-tomcat-8.5.88/bin/startup.sh'
             }
         }
     }
